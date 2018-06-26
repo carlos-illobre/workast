@@ -1,0 +1,56 @@
+{
+  "name": "workast",
+  "version": "1.0.0",
+  "description": "Technical Assessment Back End Developer - Workast",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "debug": "node debug server.js",
+    "nodemon": "nodemon -e js,json,yml",
+    "test": "eslint --fix . && NODE_ENV=test API_TOKEN=5CD4ED173E1C95FE763B753A297D5 nyc --check-coverage --lines 100 --functions 100 --branches 100 mocha app/**/*.test.js",
+    "test:debug": "NODE_ENV=test API_TOKEN=5CD4ED173E1C95FE763B753A297D5 mocha debug app/**/*.test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/carlos-illobre/workast.git"
+  },
+  "keywords": [
+    "RESTfull",
+    "Express.js",
+    "MongoDB"
+  ],
+  "author": "Carlos Illobre",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/carlos-illobre/workast/issues"
+  },
+  "homepage": "https://github.com/carlos-illobre/workast#readme",
+  "nyc": {
+    "include": [
+      "app/**/*.js",
+      "database/**/*.js",
+      "models/**/*.js"
+    ],
+    "reporter": [
+      "lcov",
+      "text"
+    ]
+  },
+  "devDependencies": {
+    "eslint": "^5.0.0",
+    "eslint-plugin-promise": "^3.8.0",
+    "mocha": "^5.2.0",
+    "nyc": "^12.0.2",
+    "supertest": "^3.1.0"
+  },
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "cors": "^2.8.4",
+    "express": "^4.16.3",
+    "express-winston": "^2.5.1",
+    "glob": "^7.1.2",
+    "swagger-jsdoc": "^1.9.7",
+    "swagger-ui-express": "^3.0.10",
+    "winston": "^3.0.0"
+  }
+}
