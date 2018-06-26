@@ -1,13 +1,32 @@
-init project
-setup mocha
-setup instanbul
-Create server
-setup express
-setup swagger
-setup logger
+setup-project
+=============
+* init project
+* setup mocha
+* setup instanbul
+* setup supertest
+* setup nodemon
+* setup eslint
+* Create server
+* setup express
+* setup swagger
+* setup logger
+
+setup-docker
+============
 setup docker
 setup mongodb
 setup docker-compose
+
+    "mongo:start": "docker-compose up mongo",
+    "mongo:cli": "docker exec -it mongo mongo",
+    "dev": "docker-compose run --rm --service-ports web npm run nodemon",
+    "dev:new": "docker-compose build && docker-compose up",
+    "dev:debug": "docker-compose run --rm --service-ports web npm run debug",
+    "dev:build": "docker-compose build && npm install && npm run dev",
+    "dev:shell": "docker-compose run --rm --service-ports web sh"
+
+create-user
+===========
 Create a new user endpoint: test, swagger, endpoint
 
 Authentication
@@ -19,6 +38,9 @@ _id
 name (String)
 avatar (Url)
 
+
+create-article
+==============
 Create a new article endpoint: test, swagger, endpoint
 
 Article Model
@@ -28,9 +50,18 @@ title (string)
 text (string)
 tags (array of strings)
 
+
+edit-article
+============
 Edit an article endpoint: test, swagger, endpoint
 
+
+delete-article
+==============
 Delete an article endpoint: test, swagger, endpoint
 
+
+list-articles
+=============
 Return all articles (from all users) that contains the given tag(s) (1 or more) endpoint: test, swagger, endpoint
 
