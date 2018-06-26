@@ -1,19 +1,24 @@
-const winston = require('winston')
+const { createLogger, format, transports } = require('winston')
 
-module.exports = ({silent} = {}) => winston.createLogger({
+module.exports = ({silent} = {}) => createLogger({
+    level: 'debug',
+    format: format.combine(
+       format.colorize(),
+       format.timestamp(),
+       format.align(),
+       format.printf(info => `${info.timestamp} ${info.level}: ${info.message}`)
+    ),
     silent,
     transports: [
-        new winston.transports.Console({
+        new transports.Console({
             name: 'error-console',
-            level: 'error',
             handleExceptions: true,
             humanReadableUnhandledException: true,
             exitOnError: true,
         }),
-        new winston.transports.File({
+        new transports.File({
             name: 'debug-file',
             filename: 'log.log',
-            level: 'debug',
             handleExceptions: true,
             humanReadableUnhandledException: true,
             exitOnError: true,
