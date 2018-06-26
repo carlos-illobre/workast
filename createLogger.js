@@ -3,10 +3,10 @@ const { createLogger, format, transports } = require('winston')
 module.exports = ({silent} = {}) => createLogger({
     level: 'debug',
     format: format.combine(
-       format.colorize(),
-       format.timestamp(),
-       format.align(),
-       format.printf(info => `${info.timestamp} ${info.level}: ${info.message}`)
+        format.colorize(),
+        format.timestamp(),
+        format.align(),
+        format.printf(info => `${info.timestamp} ${info.level}: ${info.message}`)
     ),
     silent,
     transports: [
