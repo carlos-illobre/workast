@@ -526,19 +526,6 @@ module.exports = {
 ```
 
 
-create-user
-===========
-Create a new user endpoint: test, swagger, endpoint
-
-Authentication
-This API will be private, used by a mobile app or server side applications so every call to the API will include an API token (example: 5CD4ED173E1C95FE763B753A297D5) to validate. 
-Please indicate in the API documentation where in the request we should place that token. Note: for simplicity make the token an environment variable
-
-User Model:
-_id
-name (String)
-avatar (Url)
-
 
 create-article
 ==============

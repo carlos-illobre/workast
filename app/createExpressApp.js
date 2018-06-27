@@ -10,7 +10,7 @@ const authApiTokenMiddleware = require('./auth/authApiTokenMiddleware.js')
 module.exports = async ({database, logger}) => express()
 .use(expressWinston.logger({
     winstonInstance: logger,
-    msg: '{{res.statusCode}} {{req.method}} {{req.url}} {{res.responseTime}}ms querystring={{JSON.stringify(req.query)}} response body:{{JSON.stringify(res.body)}}',
+    msg: '{{res.statusCode}} {{req.method}} {{req.url}} {{res.responseTime}}ms',
     meta: false,
 }))
 .use(bodyParser.urlencoded({extended: true}))
