@@ -7,7 +7,7 @@
     "start": "node server.js",
     "debug": "node debug server.js",
     "nodemon": "nodemon -e js,json,yml",
-    "test": "eslint --fix . && NODE_ENV=test API_TOKEN=5CD4ED173E1C95FE763B753A297D5 nyc --check-coverage --lines 100 --functions 100 --branches 100 mocha app/**/*.test.js",
+    "test": "eslint --fix . && NODE_ENV=test API_TOKEN=5CD4ED173E1C95FE763B753A297D5 nyc --check-coverage --lines 100 --functions 100 --branches 100 mocha --async-only --bail --exit app/**/*.test.js",
     "test:debug": "NODE_ENV=test API_TOKEN=5CD4ED173E1C95FE763B753A297D5 mocha debug app/**/*.test.js",
     "test:nolint": "NODE_ENV=test API_TOKEN=5CD4ED173E1C95FE763B753A297D5 mocha app/**/*.test.js",
     "dev": "docker-compose run --rm --service-ports api npm run nodemon",
@@ -44,9 +44,11 @@
     ]
   },
   "devDependencies": {
+    "chai": "^4.1.2",
     "eslint": "^5.0.0",
     "eslint-plugin-promise": "^3.8.0",
     "mocha": "^5.2.0",
+    "mockgoose": "^7.3.5",
     "nodemon": "^1.17.5",
     "nyc": "^12.0.2",
     "supertest": "^3.1.0"
@@ -55,8 +57,15 @@
     "body-parser": "^1.18.3",
     "cors": "^2.8.4",
     "express": "^4.16.3",
+    "express-validation": "^1.0.2",
     "express-winston": "^2.5.1",
     "glob": "^7.1.2",
+    "halson": "^3.0.0",
+    "joi": "^13.4.0",
+    "lodash": "^4.17.10",
+    "mongoose": "^5.1.6",
+    "passport": "^0.4.0",
+    "passport-http-bearer": "^1.0.1",
     "swagger-jsdoc": "^1.9.7",
     "swagger-ui-express": "^3.0.10",
     "winston": "^3.0.0"

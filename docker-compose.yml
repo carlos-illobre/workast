@@ -5,7 +5,7 @@ services:
     build: .
     environment:
         # The mongodb host is the database service name
-        DOCKER_MONGODB_URL: mongodb://mongo:27017/workast
+        MONGODB_URL: mongodb://mongo:27017/workast
         NODE_ENV: '${NODE_ENV}'
         API_TOKEN: '${API_TOKEN}' 
     ports:

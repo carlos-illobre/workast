@@ -1,5 +1,4 @@
 module.exports = {
-   // "parser": "babel-eslint",
     "env": {
         "es6": true,
         "node": true,
@@ -13,7 +12,8 @@ module.exports = {
     "rules": {
         "indent": [
             "error",
-            4
+            4,
+            { "MemberExpression": 0 }
         ],
         "linebreak-style": [
             "error",
