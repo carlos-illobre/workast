@@ -5,6 +5,7 @@ const swaggerUi = require('swagger-ui-express')
 
 const apiRouter = require('./api/createApiRouter.js')()
 const swaggerDocument = require('./getSwaggerDocument.js')()
+const authApiTokenMiddleware = require('./auth/authApiTokenMiddleware.js')
 
 module.exports = async ({database, logger}) => express()
 .use(expressWinston.logger({
@@ -21,7 +22,7 @@ module.exports = async ({database, logger}) => express()
     req.db = database
     return next()
 })
-.use('/api', apiRouter)
+.use('/api', authApiTokenMiddleware, apiRouter)
 .use((error, req, res, next) => {
     error.status = error.status || 500
     logger.error(error, error)

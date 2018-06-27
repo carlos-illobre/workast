@@ -170,13 +170,19 @@ describe('POST api/v1/users', function () {
 
         expect(originalCount).to.equals(newCount)
     })
-/*
+
     it('return 401 if the user was not authenticated', async function() {
 
         const originalCount = await this.db.User.count()
 
+        const data = {
+            name: 'some user name',
+            avatar: 'http://some_url',
+        }
+
         await request(this.app)
         .post('/api/v1/users')
+        .send(data)
         .expect(401, {})
 
         const newCount = await this.db.User.count()
@@ -184,5 +190,5 @@ describe('POST api/v1/users', function () {
         expect(originalCount).to.equals(newCount)
 
     })
-*/
+
 })
