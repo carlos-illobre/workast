@@ -1,5 +1,4 @@
 const { Router } = require('express')
-//const apiTokenAuth = require(`${process.env.PWD}/app/auth/apiTokenAuthMiddleware.js`);
 const halson = require('halson')
 const validate = require('express-validation')
 const Joi = require('joi')
@@ -17,8 +16,7 @@ module.exports = Router({mergeParams: true})
 
     try {
 
-        const user = new req.db.User(req.body)
-        await user.save()
+        const user = await req.db.User.create(req.body)
 
         const location = `${req.base}${req.originalUrl}/${user.id}`
         res.setHeader('Location', location)
