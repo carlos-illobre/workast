@@ -1,6 +1,6 @@
 const { createLogger, format, transports } = require('winston')
 
-module.exports = ({silent} = {}) => createLogger({
+module.exports = ({ silent } = {}) => createLogger({
     level: 'debug',
     format: format.combine(
         format.colorize(),
