@@ -526,24 +526,6 @@ module.exports = {
 ```
 
 
-
-create-article
-==============
-Create a new article endpoint: test, swagger, endpoint
-
-Article Model
-_id
-userId (User._id)
-title (string)
-text (string)
-tags (array of strings)
-
-
-edit-article
-============
-Edit an article endpoint: test, swagger, endpoint
-
-
 delete-article
 ==============
 Delete an article endpoint: test, swagger, endpoint

@@ -18,8 +18,8 @@ module.exports = Router({mergeParams: true})
 }), async (req, res, next) => {
 
     try {
-        const user = await req.db.User.findById(req.params.userId)
 
+        const user = await req.db.User.findById(req.params.userId)
 
         const article = await req.db.Article.create({
             ...req.body,
@@ -35,10 +35,14 @@ module.exports = Router({mergeParams: true})
         )
 
     } catch(error) {
-        next({
-            message: `The user ${req.params.userId} was not found.`,
-            status: 404,
-        })
+        if (error.kind == 'ObjectId') {
+            next({
+                message: `The user ${req.params.userId} was not found.`,
+                status: 404,
+            })
+        } else {
+            next(error)
+        }
     }
 
 })

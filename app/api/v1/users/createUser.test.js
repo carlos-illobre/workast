@@ -32,6 +32,18 @@ describe('POST api/v1/users', function () {
                 self: {
                     href: res.header.location,
                 },
+                createArticle: {
+                    href: `${res.header.location}/articles`,
+                },
+                editArticle: {
+                    href: `${res.header.location}/articles/{articleId}`,
+                },
+                deleteArticle: {
+                    href: `${res.header.location}/articles/{articleId}`,
+                },
+                listArticles: {
+                    href: `${res.header.location}/articles?[tags]={tag}`,
+                },
             },
         })
 

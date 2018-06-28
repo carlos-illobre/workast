@@ -24,6 +24,10 @@ module.exports = Router({mergeParams: true})
         res.status(201).json(
             halson({ id: user.id })
             .addLink('self', location)
+            .addLink('createArticle', `${location}/articles`)
+            .addLink('editArticle', `${location}/articles/{articleId}`)
+            .addLink('deleteArticle', `${location}/articles/{articleId}`)
+            .addLink('listArticles', `${location}/articles?[tags]={tag}`)
         )
 
     } catch(error) {

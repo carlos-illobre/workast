@@ -1,5 +1,5 @@
- /v1/users/{userId}/articles:
-    post:
+ /v1/users/{userId}/articles/{articleId}:
+    patch:
         tags: 
             - articles
         summary: Creates an article
@@ -23,14 +23,17 @@
             required: true
             type: string
             example: 1
+        -   name: articleId
+            in: path
+            description: article id
+            required: true
+            type: string
+            example: 1
         -   name: body
             in: body
             required: true
             schema:
                 type: object
-                required:
-                    - title
-                    - text
                 properties:
                     title:
                         type: string
@@ -45,12 +48,7 @@
                             example: some tag
         responses:
             201:
-                description: Created
-                headers:
-                    Location:
-                        description: http://localhost:8080/api/v1/users/1/articles/1
-                        type: string
-                        format: uri
+                description: OK
                 schema:
                     type: object
                     required:
