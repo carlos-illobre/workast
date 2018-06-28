@@ -6,6 +6,8 @@ const { Mockgoose } = require('mockgoose')
 const mockgoose = new Mockgoose(mongoose)
 
 process.setMaxListeners(0)
+//process.on('warning', e => { debugger });
+require('events').EventEmitter.defaultMaxListeners = 0
 
 let loaded = false
 
