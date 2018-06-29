@@ -26,7 +26,7 @@ describe('PATCH api/v1/users/:userId/articles/:articleId', function () {
             ],
         }
 
-        const { _id } = await this.db.Article.create({
+        const { id } = await this.db.Article.create({
             userId: user.id,
             ...articleData,
         })
@@ -39,19 +39,19 @@ describe('PATCH api/v1/users/:userId/articles/:articleId', function () {
         }
 
         await request(this.app)
-        .patch(`/api/v1/users/${user.id}/articles/${_id}`)
+        .patch(`/api/v1/users/${user.id}/articles/${id}`)
         .set('Authorization', `Bearer ${this.apiToken}`)
         .send(data)
         .expect(204)
          
-        const article = await this.db.Article.findById(_id)
+        const article = await this.db.Article.findById(id)
 
         expect(_.pick(article, Object.keys(articleData))).to.deep.equal({
             ...articleData,
             ...data,
         })
 
-        expect(article.userId._id.toString()).to.equal(user._id.toString())
+        expect(article.userId.toString()).to.equal(user.id)
 
     })
 
@@ -121,13 +121,13 @@ describe('PATCH api/v1/users/:userId/articles/:articleId', function () {
             ],
         }
 
-        const { _id } = await this.db.Article.create({
+        const { id } = await this.db.Article.create({
             userId: user.id,
             ...articleData,
         })
 
         await request(this.app)
-        .patch(`/api/v1/users/${user.id}/articles/${_id}`)
+        .patch(`/api/v1/users/${user.id}/articles/${id}`)
         .set('Authorization', `Bearer ${this.apiToken}`)
         .send({})
         .expect(400, {
@@ -147,9 +147,9 @@ describe('PATCH api/v1/users/:userId/articles/:articleId', function () {
             },
         })
 
-        const article = await this.db.Article.findById(_id)
+        const article = await this.db.Article.findById(id)
         expect(_.pick(article, Object.keys(articleData))).to.deep.equal(articleData)
-        expect(article.userId._id.toString()).to.equal(user.id)
+        expect(article.userId.toString()).to.equal(user.id)
 
     })
 
@@ -169,7 +169,7 @@ describe('PATCH api/v1/users/:userId/articles/:articleId', function () {
             ],
         }
 
-        const { _id } = await this.db.Article.create({
+        const { id } = await this.db.Article.create({
             userId: user.id,
             ...articleData,
         })
@@ -181,7 +181,7 @@ describe('PATCH api/v1/users/:userId/articles/:articleId', function () {
         }
 
         await request(this.app)
-        .patch(`/api/v1/users/${user.id}/articles/${_id}`)
+        .patch(`/api/v1/users/${user.id}/articles/${id}`)
         .set('Authorization', `Bearer ${this.apiToken}`)
         .send(data)
         .expect(400, {
@@ -203,9 +203,9 @@ describe('PATCH api/v1/users/:userId/articles/:articleId', function () {
             },
         })
 
-        const article = await this.db.Article.findById(_id)
+        const article = await this.db.Article.findById(id)
         expect(_.pick(article, Object.keys(articleData))).to.deep.equal(articleData)
-        expect(article.userId._id.toString()).to.equal(user.id)
+        expect(article.userId.toString()).to.equal(user.id)
 
     })
 
@@ -225,7 +225,7 @@ describe('PATCH api/v1/users/:userId/articles/:articleId', function () {
             ],
         }
 
-        const { _id } = await this.db.Article.create({
+        const { id } = await this.db.Article.create({
             userId: user.id,
             ...articleData,
         })
@@ -235,7 +235,7 @@ describe('PATCH api/v1/users/:userId/articles/:articleId', function () {
         }
 
         await request(this.app)
-        .patch(`/api/v1/users/${user.id}/articles/${_id}`)
+        .patch(`/api/v1/users/${user.id}/articles/${id}`)
         .set('Authorization', `Bearer ${this.apiToken}`)
         .send(data)
         .expect(400, {
@@ -257,9 +257,9 @@ describe('PATCH api/v1/users/:userId/articles/:articleId', function () {
             },
         })
 
-        const article = await this.db.Article.findById(_id)
+        const article = await this.db.Article.findById(id)
         expect(_.pick(article, Object.keys(articleData))).to.deep.equal(articleData)
-        expect(article.userId._id.toString()).to.equal(user.id)
+        expect(article.userId.toString()).to.equal(user.id)
 
     })
 
@@ -279,7 +279,7 @@ describe('PATCH api/v1/users/:userId/articles/:articleId', function () {
             ],
         }
 
-        const { _id } = await this.db.Article.create({
+        const { id } = await this.db.Article.create({
             userId: user.id,
             ...articleData,
         })
@@ -294,13 +294,13 @@ describe('PATCH api/v1/users/:userId/articles/:articleId', function () {
         }
 
         await request(this.app)
-        .patch(`/api/v1/users/${user.id}/articles/${_id}`)
+        .patch(`/api/v1/users/${user.id}/articles/${id}`)
         .send(data)
         .expect(401)
 
-        const article = await this.db.Article.findById(_id)
+        const article = await this.db.Article.findById(id)
         expect(_.pick(article, Object.keys(articleData))).to.deep.equal(articleData)
-        expect(article.userId._id.toString()).to.equal(user.id)
+        expect(article.userId.toString()).to.equal(user.id)
 
     })
 

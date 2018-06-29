@@ -59,12 +59,8 @@
                         _links:
                             type: object
                             required:
-                                - id
                                 - self
                             properties:
-                                id:
-                                    type: number
-                                    example: 1
                                 self:
                                     type: object
                                     required:
@@ -76,5 +72,7 @@
                                             example: http://localhost:8080/users/1/articles/1
             400:
                 description: Bad Request
+            401:
+                description: Unauthorized
             500:
                 description: Internal server error

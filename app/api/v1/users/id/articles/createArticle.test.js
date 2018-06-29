@@ -36,7 +36,6 @@ describe('POST api/v1/users/:id/articles', function () {
         const id = res.header.location.split('/').pop()
         expect(res.header.location).to.equal(`${res.request.url}/${id}`)
         expect(res.body).to.deep.equal({
-            id,
             _links: {
                 self: {
                     href: res.header.location,
@@ -47,7 +46,7 @@ describe('POST api/v1/users/:id/articles', function () {
         const article = await this.db.Article.findById(id)
 
         expect(_.pick(article, Object.keys(data))).to.deep.equal(data)
-        expect(article.userId._id.toString()).to.equal(user.id)
+        expect(article.userId.toString()).to.equal(user.id)
 
     })
 
@@ -104,7 +103,6 @@ describe('POST api/v1/users/:id/articles', function () {
         })
         
         const newCount = await this.db.Article.count()
-
         expect(originalCount).to.equals(newCount)
 
     })
@@ -150,7 +148,6 @@ describe('POST api/v1/users/:id/articles', function () {
         })
 
         const newCount = await this.db.Article.count()
-
         expect(originalCount).to.equals(newCount)
 
     })
@@ -196,7 +193,6 @@ describe('POST api/v1/users/:id/articles', function () {
         })
 
         const newCount = await this.db.Article.count()
-
         expect(originalCount).to.equals(newCount)
 
     })
@@ -240,7 +236,6 @@ describe('POST api/v1/users/:id/articles', function () {
         })
 
         const newCount = await this.db.Article.count()
-
         expect(originalCount).to.equals(newCount)
 
     })
@@ -288,7 +283,6 @@ describe('POST api/v1/users/:id/articles', function () {
         })
 
         const newCount = await this.db.Article.count()
-
         expect(originalCount).to.equals(newCount)
 
     })
