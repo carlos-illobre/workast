@@ -27,7 +27,6 @@ describe('POST api/v1/users', function () {
         const id = res.header.location.split('/').pop()
         expect(res.header.location).to.equal(`${res.request.url}/${id}`)
         expect(res.body).to.deep.equal({
-            id,
             _links: {
                 self: {
                     href: res.header.location,
@@ -35,14 +34,8 @@ describe('POST api/v1/users', function () {
                 createArticle: {
                     href: `${res.header.location}/articles`,
                 },
-                editArticle: {
-                    href: `${res.header.location}/articles/{articleId}`,
-                },
-                deleteArticle: {
-                    href: `${res.header.location}/articles/{articleId}`,
-                },
                 listArticles: {
-                    href: `${res.header.location}/articles?[tags]={tag}`,
+                    href: `${res.header.location}/articles`,
                 },
             },
         })

@@ -30,7 +30,7 @@ module.exports = Router({mergeParams: true})
         res.setHeader('Location', location)
 
         res.status(201).json(
-            halson({ id: article.id })
+            halson()
             .addLink('self', location)
         )
 
