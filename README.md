@@ -3,9 +3,11 @@
 1. Install [docker](https://www.docker.com/community-edition#/download)
 2. Install [docker-compose](https://docs.docker.com/compose/install/)
 3. Install [nodeJs](https://nodejs.org/en/download/)
-4. Clone the project: `git clone git@gitlab.bluestarsports.io:tournamentconnect/scheduler-api.git`
+4. Clone the project: `https://github.com/carlos-illobre/workast.git`
 5. Run: `npm run dev:build`
 6. Open a browser and go to: `http://localhost:8080/api/doc`
+
+The first time you run the test it will throw a timeout error because mockgoose will need to download something. Once mockgoose finish the download the test will run without errors.
 
 # Commands
 
@@ -38,19 +40,27 @@ Executes the mongodb server docker container.
 ### npm run mongo:cli
 Open a command line interface to the mongodb database. You should execute this command after `npm run mongo:start` or `npm run dev`
 
+# Authentication
+
+To authenticate the endpoints you have to add the Authorization header:
+
+```
+curl -X GET "http://localhost:8080/api/v1/articles" -H "accept: application/json" -H "Authorization: Bearer 5CD4ED173E1C95FE763B753A297D5"
+```
+
 # How to create a new endpoint
 
 To create a new endpoint you just need to create a new file into `workast/app/api` or in any subfolder.
 If the file exports an express Router then the Router will be automatically injected into the express application:
 ```
 // workast/app/api/v1/my/url/helloworld.js
-const express = require('express')
+const { Router } = require('express')
 
-module.exports = express
-  .Router({mergeParams: true})
-  .get('/my/url', (req, res, next) => {
+module.exports = Router({mergeParams: true})
+.Router({mergeParams: true})
+.get('/my/url', (req, res, next) => {
     res.send('Hello')
-  })  
+})  
 
 ```
 
@@ -63,11 +73,12 @@ The folder structure should be like the url path, so if the endpoint is `GET /my
 * You should never return the full instance, you should return a [HAL](http://stateless.co/hal_specification.html) object:
 
 ```
-res.status(201).json(  
-    halson({
-        id: division.id
-    }).addLink('self', location)    
-);
+res.status(201).json(
+    halson()
+    .addLink('self', location)
+    .addLink('createArticle', `${location}/articles`)
+    .addLink('listArticles', `${req.base}/api/v1/articles`)
+)
 ```
 
 That code will produce this:
@@ -76,8 +87,14 @@ That code will produce this:
 {
   "_links": {
     "self": {
-      "href": "http://localhost:8080/divisions/1"
-    }
+      "href": "http://localhost:8080/api/v1/users/1"
+    },
+    "createArticle": {
+      "href": "http://localhost:8080/api/v1/users/1/articles"
+    },
+    "listArticles": {
+      "href": "http://localhost:8080/api/v1/articles/1"
+    },
   }
 }
 ```
@@ -86,44 +103,48 @@ You can add more links if you need it.
 
 # How to execute Queries from the endpoint
 
-Every endpoint will have all the mongoose models injected into the `req.db` parameter, so we can do this:
+Every endpoint will have all the mongoose models injected into the `req.db` parameter, so if you want to acces to the Article model you can do this: `req.db.Article`
 
 ```
-// workast/app/api/v1/sports/getSports.js
-const express = require('express');
-    
-module.exports = express       
-.Router({mergeParams: true})   
-.get('/v1/sports', async (req, res, next) => {
-  
-    const sports = await req.db.Sport.findAll({
-        raw: true,
-    });
-    res.send({ sports });
+// workast/app/api/v1/users/id/articles/deleteArticle.js
+const { Router } = require('express')
 
-});  
+module.exports = Router({mergeParams: true})
+.delete('/v1/users/:userId/articles/:articleId', async (req, res, next) => {
+
+    try {
+
+        await req.db.Article.findByIdAndDelete(req.params.articleId)
+        res.sendStatus(204)
+
+    } catch(error) {
+        if (error.kind == 'ObjectId') {
+            next({
+                message: `The article ${req.params.articleId} was not found.`,
+                status: 404,
+            })
+        } else {
+            next(error)
+        }
+    }
+
+})
 ```
-You should never return the entity, you must return the raw data.
 
 # Logger
 
 Every endpoint will have a logger injected into the `req.logger` parameter:
 
 ```
-// workast/app/api/v1/sports/getSports.js
-const express = require('express');
-    
-module.exports = express       
-.Router({mergeParams: true})   
-.get('/v1/sports', async (req, res, next) => {
+// workast/app/api/v1/my/url/helloworld.js
+const { Router } = require('express')
 
-    req.logger.info('hello');
-    const sports = await req.db.Sport.findAll({
-        raw: true
-    });
-    res.send({ sports });
-
-});  
+module.exports = Router({mergeParams: true})
+.Router({mergeParams: true})
+.get('/my/url', (req, res, next) => {
+    req.logger.info('hello')
+    res.send('Hello')
+})  
 ```
 
 The logger is an instance of [Winston](https://github.com/winstonjs/winston) so you can use `info`, `error`, `warn` and all the winston supported methods.
@@ -133,204 +154,162 @@ The logger is an instance of [Winston](https://github.com/winstonjs/winston) so 
 To create a test you just need to create a new file into `workast/app` or into `scheduler-api/models` or into any sub folder. The filename extension must be `.test.js`:
 
 ```
-const request = require('supertest');
+const request = require('supertest')
+const _ = require('lodash')
+const { expect } = require('chai')
 
-const createTestApp = require(`${process.env.PWD}/test/createTestApp.js`);
+const createTestApp = require(`${process.env.PWD}/test/createTestApp.js`)
 
-describe('GET api/v1/sports', function () {
-  
-    beforeEach(function() {    
-        return createTestApp(this);     
-    }); 
-      
-    it('return 200 and the list of sports', async function() {
-      
-        const sports = await this.db.Sport.findAll();
+describe('POST api/v1/users', function () {
+
+    beforeEach(async function() {
+        await createTestApp(this)
+    })
+
+    it('return 201 if the user was created', async function() {
         
-        request(this.app)
-        .get('/api/v1/sports')          
-        .expect(200, {
-            sports: sports.map((sport) => {
-                return {   
-                    id: sport.id,                   
-                    name: sport.name,               
-                };
+        const data = {
+            name: 'some user name',
+            avatar: 'http://some_url',
+        }
 
-            })
-        });
+        const res = await request(this.app)
+        .post('/api/v1/users')
+        .set('Authorization', `Bearer ${this.apiToken}`)
+        .send(data)
+        .expect(201)
+        
+        expect(res.header.location).to.exist
+        const id = res.header.location.split('/').pop()
+        expect(res.header.location).to.equal(`${res.request.url}/${id}`)
+        expect(res.body).to.deep.equal({
+            _links: {
+                self: {
+                    href: res.header.location,
+                },
+                createArticle: {
+                    href: `${res.header.location}/articles`,
+                },
+                listArticles: {
+                    href: `${res.request.protocol}//${res.request.host}/api/v1/articles`,
+                },
+            },
+        })
 
-    });
+        const user = await this.db.User.findById(id)
+
+        expect(_.pick(user, Object.keys(data))).to.deep.equal(data)
+
+    })
 
 })
+
 ```
 then just run `npm test`.
 
 The test file should be in the same folder as the file to be tested.
-This method creates and destroy the in memory database in each test.
+This method creates and destroy the data in a memory database in each test.
 The `createTestApp` creates the in memory database sets the following properties into the `this` object:
-* db: It is the same object than `req.db`. It has all the entities and is the database reference
-* app: It is the express application
+* db: This is the same object than `req.db`. It has all the entities and is the database reference
+* app: This is the express application
 
 You can't use an arrow function like this `it('return 200 and the list of sports', async () => {` because each test shares the `this` reference.
 
 If you want to see the executed queries and the log info just add a `true` parameter to the `createTestApp` function:
 
 ```
-const request = require('supertest');
+const request = require('supertest')
+const _ = require('lodash')
+const { expect } = require('chai')
 
-const createTestApp = require(`${process.env.PWD}/test/createTestApp.js`);
+const createTestApp = require(`${process.env.PWD}/test/createTestApp.js`)
 
-describe('GET api/v1/sports', function () {
-  
-    beforeEach(function() {    
-        return createTestApp(this, true);     
-    }); 
-      
-    it('return 200 and the list of sports', async function() {
-      
-        const sports = await this.db.Sport.findAll();
+describe('POST api/v1/users', function () {
+
+    beforeEach(async function() {
+        await createTestApp(this, true)
+    })
+
+    it('return 201 if the user was created', async function() {
         
-        request(this.app)
-        .get('/api/v1/sports')          
-        .expect(200, {
-            sports: sports.map((sport) => {
-                return {   
-                    id: sport.id,                   
-                    name: sport.name,               
-                };
+        const data = {
+            name: 'some user name',
+            avatar: 'http://some_url',
+        }
 
-            })
-        });
+        const res = await request(this.app)
+        .post('/api/v1/users')
+        .set('Authorization', `Bearer ${this.apiToken}`)
+        .send(data)
+        .expect(201)
+        
+        expect(res.header.location).to.exist
+        const id = res.header.location.split('/').pop()
+        expect(res.header.location).to.equal(`${res.request.url}/${id}`)
+        expect(res.body).to.deep.equal({
+            _links: {
+                self: {
+                    href: res.header.location,
+                },
+                createArticle: {
+                    href: `${res.header.location}/articles`,
+                },
+                listArticles: {
+                    href: `${res.request.protocol}//${res.request.host}/api/v1/articles`,
+                },
+            },
+        })
 
-    });
+        const user = await this.db.User.findById(id)
+
+        expect(_.pick(user, Object.keys(data))).to.deep.equal(data)
+
+    })
 
 })
+
 ```
 
 # How to create the Swagger documentation:
 
 Just create a file into the endpoint's folder with the extension `.swagger.yaml` like this:
 ```
-/v1/sports:
-    get:
-        tags:                  
-            - sports           
-        summary: Get all the sports     
-        description: Get all the sports. This is a public endpoint.
-        operationId: getSports.js       
-        produces:
-            - application/json 
-        responses:             
-            200:
-                description: OK
-                schema:        
-                    type: object                    
-                    required:  
-                        - sports                        
-                    properties:
-                        sports:
-                            type: array                     
-                            items:                          
-                                type: object                    
-                                required:                       
-                                    - id                            
-                                    - name                          
-                                properties:                     
-                                    id:                             
-                                        type: number                    
-                                        example: 1                      
-                                    name:                           
-                                        type: string                    
-                                        example: Soccer                 
-            500:               
-                description: Internal server error
-```
-You should put an example value to each property.
-The file must use the Swagger 2.0 format.
-
-## Operator Authentication
-
-To authenticate an endpoint you have to add the `scheduler-api/app/auth/operatorAuthMiddleware.js`, this middleware uses the jwt to search the user into the database and verifies the user has role operator ar role admin. If the user does not exists or is not operator neither admin then returns a 401 error, if the user exists and has operator or admin role then the user instance will be stored into `req.user`:
-
-```
-const express = require('express');
-const operatorAuth = require(`${process.env.PWD}/app/auth/operatorAuthMiddleware.js`);
-const halson = require('halson');
-
-module.exports = express
-.Router({mergeParams: true})
-.post('/v1/divisions', operatorAuth, async (req, res, next) => {
-
-    try {
-    
-        req.logger.info(`The user id is: ${req.user.id}`);
-        req.logger.info(`The operator id is: ${req.user.operator.id}`);
-
-        const division = await req.db.Division.create({
-            name: req.body.name,
-            gender_id: req.body.gender_id,
-            abbreviation: req.body.abbreviation,
-            skill: req.body.skill,
-        });
-
-        const location = `${req.base}${req.originalUrl}/${division.id}`;
-        res.setHeader('Location', location);
-        res.status(201).json(
-            halson({
-                id: division.id
-            }).addLink('self', location)
-        );
-
-    } catch(error) {
-        next(error);
-    }
-
-});
-```
-
-## Test with Swagger
-To make the endpoint testable from swagger you have to add the header parameter:
-```
  /v1/users:
     post:
-        tags:                  
-            - users            
+        tags: 
+            - users
         summary: Creates a user
-        description: Creates a user
-        operationId: createUser.js      
+        description: Creates a user 
+        operationId: createUser.js
         consumes:
-            - application/json 
+            - application/json
             - application/x-www-form-urlencoded
         produces:
-            - application/json 
-        parameters:            
+            - application/json
+        parameters:
         -   name: Authorization
-            in: header         
+            in: header
             description: Authorization token
-            required: true     
-            type: string       
-            example: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOnsiaWQiOjF9LCJpYXQiOjE1MTAxNTI2MDEsImV4cCI6MTUxMDIzOTAwMX0.5JmvBOkG3jkhQfZwB61o650P0XDqIijuRv41m6Sn6Qk
+            required: true
+            type: string
+            example: Bearer 5CD4ED173E1C95FE763B753A297D5
         -   name: body
             in: body
             required: true
             schema:
-                type: object   
+                type: object
+                required:
+                    - name
                 properties:
-                    first_name:
-                        type: string                    
-                        example: Greg                   
-                    last_name: 
-                        type: string                    
-                        example: Williams  
-                    email:     
-                        type: string                    
-                        example: gwilliams@bluestarspots.com
-                        format: email                   
-                    phone:     
-                        type: string   
-                        example: 555-5555
+                    name:
+                        type: string
+                        example: Carlos
+                    avatar:
+                        type: string
+                        example: http://my_avatar
+                        format: uri
         responses:
-           201:
+            201:
                 description: Created
                 headers:
                     Location:
@@ -345,12 +324,8 @@ To make the endpoint testable from swagger you have to add the header parameter:
                         _links:
                             type: object
                             required:
-                                - id
                                 - self
                             properties:
-                                id:
-                                    type: number
-                                    example: 1
                                 self:
                                     type: object
                                     required:
@@ -359,80 +334,88 @@ To make the endpoint testable from swagger you have to add the header parameter:
                                         href:
                                             type: string
                                             format: uri
-                                            example: http://localhost:8080/users/1
+                                            example: http://localhost:8080/api/v1/users/1
+                                createArticle:
+                                    type: object
+                                    required:
+                                        - href
+                                    properties:
+                                        href:
+                                            type: string
+                                            format: uri
+                                            example: http://localhost:8080/api/v1/users/1/articles
+                                listArticles:
+                                    type: object
+                                    required:
+                                        - href
+                                    properties:
+                                        href:
+                                            type: string
+                                            format: uri
+                                            example: http://localhost:8080/api/v1/articles
             400:
                 description: Bad Request
+            401:
+                description: Unauthorized
             500:
                 description: Internal server error
 ```
+You should put an example value to each property.
+The file must use the Swagger 2.0 format.
 
-# Intance methods
 
-When you want to avoid duplicate code between enpoints you can put it into an entity instance method like this:
-```
-module.exports = (sequelize, DataTypes) => {
-                               
-    const User = sequelize.define('User', {
-        first_name: DataTypes.STRING,   
-        last_name: DataTypes.STRING,    
-        email: DataTypes.STRING,        
-        phone: DataTypes.STRING,        
-    }, {
-        tableName: 'users',    
-    });
-
-    User.associate = (models) => {  
-        User.Roles = User.belongsToMany(models.Role, {
-            through: models.UserRole,       
-            foreignKey: 'user_id',          
-            as: 'roles',       
-        });
-        User.Role = User.Roles.target;  
-    };
-    
-    User.prototype.addAdminRole = async function() {
-        const adminRole = await User.Role.getAdminRole(); 
-        await this.addRole(adminRole);  
-        return this;           
-    };
-    
-    User.prototype.isAdmin = async function() {
-        await this.reload({    
-            include: [{        
-                model: User.Role,               
-                as: 'roles',   
-                attributes: [ 'name' ],         
-            }],                
-        });
-        return this.roles.find(role => role.name == User.Role.adminRoleName);
-    };
-    
-    return User;
-    
-};
-```
-Now you can use that method from everywhere:
-```
-const user = await this.db.User.create(data);
-await user.addAdminRole();
-```
 # Error handling
 
-To handle the errors inside the endpoint just create an `Error` instance with the message an add to it a `status` property with the status code:
+To handle the errors inside the endpoint just create an object { message: '', status: '' } with the message and the status code:
 
 ```
-const halson = require('halson');
+const { Router } = require('express')
+const halson = require('halson')
+const validate = require('express-validation')
+const Joi = require('joi')
 
-module.exports = express       
-.Router({mergeParams: true})   
-.post('/v1/events', async (req, res, next) => {
+module.exports = Router({mergeParams: true})
+.post('/v1/users/:userId/articles', validate({
+    options: {
+        allowUnknownBody: false,
+    },
+    body: {
+        title: Joi.string().required(),
+        text: Joi.string().required(),
+        tags: Joi.array().items(
+            Joi.string()
+        ),
+    },
+}), async (req, res, next) => {
+
     try {
-        const error = new Error(`The coach with external_coach_id '${team.external_coach_id}' into the team '${team.name}' does not exist.`);
-        error.status = 400;
-        throw error;
+
+        const user = await req.db.User.findById(req.params.userId)
+
+        const article = await req.db.Article.create({
+            ...req.body,
+            userId: user.id,
+        })
+
+        const location = `${req.base}${req.originalUrl}/${article.id}`
+        res.setHeader('Location', location)
+
+        res.status(201).json(
+            halson()
+            .addLink('self', location)
+        )
+
     } catch(error) {
-        next(error);
+        if (error.kind == 'ObjectId') {
+            next({
+                message: `The user ${req.params.userId} was not found.`,
+                status: 404,
+            })
+        } else {
+            next(error)
+        }
     }
+
 })
 ```
 
@@ -443,95 +426,23 @@ If the error does not have a `status` then it will be a 500 error.
 When you want to validate the endpoint request we use [Express Validation](https://github.com/AndrewKeig/express-validation) as middleware:
 
 ```
-// scheduler-api/app/api/v1/events/createEvent.js
-const express = require('express');
-const validate = require('express-validation');
-const requestSchema = require('./createEventRequestSchema.js');
+const { Router } = require('express')
+const validate = require('express-validation')
+const Joi = require('joi')
 
-module.exports = express       
-.Router({mergeParams: true})   
-.post('/v1/events', validate(requestSchema), async (req, res, next) => {
+module.exports = Router({mergeParams: true})
+.post('/v1/users/:userId/articles', validate({
+    options: {
+        allowUnknownBody: false,
+    },
+    body: {
+        title: Joi.string().required(),
+        text: Joi.string().required(),
+        tags: Joi.array().items(
+            Joi.string()
+        ),
+    },
+}), async (req, res, next) => { ... }
       
 ```
 The schema uses [Joi](https://github.com/hapijs/joi) as framework:
-```
-// scheduler-api/app/api/v1/events/createEventRequestSchema.js
-const Joi = require('joi');    
-                               
-module.exports = {             
-    options: {
-        allowUnknownBody: false,        
-    },
-    body: {
-        sport: Joi.object().keys({
-            id: Joi.number().integer().min(1).required(),
-        }).required(),
-        name: Joi.string().max(200).required(),
-        dates: Joi.object().keys({      
-            start: Joi.date().iso().required(),
-            end: Joi.date().iso().required(),
-        }).required(),
-        image: Joi.object().keys({      
-            url: Joi.string().uri().required(),
-        }).required(),
-        teams: Joi.array().items(       
-            Joi.object().keys({
-                external_team_id: Joi.number().integer().min(1),
-                name: Joi.string().max(200).required(),
-                external_coach_id: Joi.number().integer().min(1),
-            })
-        ),
-        divisions: Joi.array().items(   
-            Joi.object().keys({
-                name: Joi.string().max(200).required(),
-                abbreviation: Joi.string().required(),
-                skill: Joi.string().required(),
-                gender: Joi.object().keys({
-                    id: Joi.number().min(1).required(), 
-                }).required(), 
-                teams: Joi.array().items(       
-                    Joi.object().keys({
-                        external_team_id: Joi.number().min(1).required(), 
-                    })
-                ).required(),  
-            })
-        ),
-        coaches: Joi.array().items(
-            Joi.object().keys({
-                external_coach_id: Joi.number().min(1),
-                first_name: Joi.string().required(),
-                last_name: Joi.string().required(),
-                email: Joi.string().email().required(),
-                phone: Joi.string(),
-            })
-        ),
-        facilities: Joi.array().items(
-            Joi.object().keys({
-                name: Joi.string().required(),
-                abbreviation: Joi.string().required(),
-                street: Joi.string().required(),
-                city: Joi.string().required(),
-                zip: Joi.string().required(),
-                state: Joi.object().keys({
-                    name: Joi.string().required(),
-                    abbreviation: Joi.string().required(),
-                }).required(),
-                map: Joi.object().keys({
-                    url: Joi.string().uri(),
-                })
-            })
-        ),
-    }
-};
-```
-
-
-delete-article
-==============
-Delete an article endpoint: test, swagger, endpoint
-
-
-list-articles
-=============
-Return all articles (from all users) that contains the given tag(s) (1 or more) endpoint: test, swagger, endpoint
-

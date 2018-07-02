@@ -35,7 +35,7 @@ describe('POST api/v1/users', function () {
                     href: `${res.header.location}/articles`,
                 },
                 listArticles: {
-                    href: `${res.header.location}/articles`,
+                    href: `${res.request.protocol}//${res.request.host}/api/v1/articles`,
                 },
             },
         })
