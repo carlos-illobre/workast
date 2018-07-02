@@ -1,0 +1,55 @@
+ /v1/users/{userId}/articles/{articleId}:
+    patch:
+        tags: 
+            - articles
+        summary: Updated an article
+        description: Updated an article 
+        operationId: editArticle.js
+        consumes:
+            - application/json
+            - application/x-www-form-urlencoded
+        parameters:
+        -   name: Authorization
+            in: header
+            description: Authorization token
+            required: true
+            type: string
+            example: Bearer 5CD4ED173E1C95FE763B753A297D5
+        -   name: userId
+            in: path
+            description: user id
+            required: true
+            type: string
+            example: 1
+        -   name: articleId
+            in: path
+            description: article id
+            required: true
+            type: string
+            example: 1
+        -   name: body
+            in: body
+            required: true
+            schema:
+                type: object
+                properties:
+                    title:
+                        type: string
+                        example: some title
+                    text:
+                        type: string
+                        example: some text
+                    tags:
+                        type: array
+                        items:
+                            type: string
+                            example: some tag
+        responses:
+            204:
+                description: No content
+            400:
+                description: Bad Request
+            401:
+                description: Unauthorized
+            500:
+                description: Internal server error

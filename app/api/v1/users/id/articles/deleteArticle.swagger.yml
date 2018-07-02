@@ -1,0 +1,38 @@
+ /v1/users/{userId}/articles/{articleId}:
+    delete:
+        tags: 
+            - articles
+        summary: Deleted an article
+        description: Creates an article 
+        operationId: deleteArticle.js
+        consumes:
+            - application/json
+            - application/x-www-form-urlencoded
+        parameters:
+        -   name: Authorization
+            in: header
+            description: Authorization token
+            required: true
+            type: string
+            example: Bearer 5CD4ED173E1C95FE763B753A297D5
+        -   name: userId
+            in: path
+            description: user id
+            required: true
+            type: string
+            example: 1
+        -   name: articleId
+            in: path
+            description: article id
+            required: true
+            type: string
+            example: 1
+        responses:
+            204:
+                description: No content
+            401:
+                description: Unauthorized
+            404:
+                description: Bad Request
+            500:
+                description: Internal server error
