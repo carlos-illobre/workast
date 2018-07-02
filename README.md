@@ -4,8 +4,9 @@
 2. Install [docker-compose](https://docs.docker.com/compose/install/)
 3. Install [nodeJs](https://nodejs.org/en/download/)
 4. Clone the project: `https://github.com/carlos-illobre/workast.git`
-5. Run: `npm run dev:build`
-6. Open a browser and go to: `http://localhost:8080/api/doc`
+5. Run: `npm install`
+6. Run: `npm run dev:build`
+7. Open a browser and go to: `http://localhost:8080/api/doc`
 
 The first time you run the test it will throw a timeout error because mockgoose will need to download something. Once mockgoose finish the download the test will run without errors.
 
