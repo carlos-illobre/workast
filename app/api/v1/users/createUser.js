@@ -25,7 +25,7 @@ module.exports = Router({mergeParams: true})
             halson()
             .addLink('self', location)
             .addLink('createArticle', `${location}/articles`)
-            .addLink('listArticles', `${location}/articles`)
+            .addLink('listArticles', `${req.base}/api/v1/articles`)
         )
 
     } catch(error) {

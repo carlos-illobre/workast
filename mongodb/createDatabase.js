@@ -7,6 +7,10 @@ module.exports = async ({
 }) => {
 
     const url = process.env.MONGODB_URL
+    
+    mongoose.set('debug', (coll, method, query, doc, options = {}) => {
+        logger.info(`${coll},${method},${JSON.stringify(query)},${JSON.stringify(options)}`)
+    })
 
     mongoose.connect(url)
 
