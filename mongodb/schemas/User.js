@@ -5,4 +5,8 @@ const userSchema = mongoose.Schema({
     avatar: String,
 })
 
+userSchema.methods.sayHello = function () {
+    return `Hello, I'm ${this.name}`
+}
+
 module.exports = userSchema

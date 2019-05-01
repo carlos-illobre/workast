@@ -22,8 +22,8 @@ module.exports = async (that, useLogger) => {
     that.db.reset = async () => Promise.all(
         Object
         .values(that.db)
-        .filter(object => object.base instanceof mongoose.constructor)
-        .map(schema => schema.deleteMany())
+        .filter(object => object.prototype instanceof mongoose.Model)
+        .map(model => model.deleteMany())
     )
 
     await that.db.reset()

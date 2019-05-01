@@ -18,7 +18,7 @@ module.exports = Router({mergeParams: true})
     
     try {
         
-        await req.db.Article.update({
+        await req.db.Article.updateOne({
             _id: req.params.articleId,
         }, {
             $set: req.body,

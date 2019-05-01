@@ -78,7 +78,7 @@ describe('POST api/v1/users/:id/articles', function () {
 
     it('return 404 if the article was created by an unexistent user', async function() {
 
-        const originalCount = await this.db.Article.count()
+        const originalCount = await this.db.Article.countDocuments()
 
         const data = {
             title: 'some title',
@@ -102,7 +102,7 @@ describe('POST api/v1/users/:id/articles', function () {
             },
         })
         
-        const newCount = await this.db.Article.count()
+        const newCount = await this.db.Article.countDocuments()
         expect(originalCount).to.equals(newCount)
 
     })
@@ -114,7 +114,7 @@ describe('POST api/v1/users/:id/articles', function () {
             avatar: 'http://some_url',
         })
 
-        const originalCount = await this.db.Article.count()
+        const originalCount = await this.db.Article.countDocuments()
 
         const data = {
             text: 'some text',
@@ -147,7 +147,7 @@ describe('POST api/v1/users/:id/articles', function () {
             },
         })
 
-        const newCount = await this.db.Article.count()
+        const newCount = await this.db.Article.countDocuments()
         expect(originalCount).to.equals(newCount)
 
     })
@@ -159,7 +159,7 @@ describe('POST api/v1/users/:id/articles', function () {
             avatar: 'http://some_url',
         })
 
-        const originalCount = await this.db.Article.count()
+        const originalCount = await this.db.Article.countDocuments()
 
         const data = {
             title: 'some title',
@@ -192,7 +192,7 @@ describe('POST api/v1/users/:id/articles', function () {
             },
         })
 
-        const newCount = await this.db.Article.count()
+        const newCount = await this.db.Article.countDocuments()
         expect(originalCount).to.equals(newCount)
 
     })
@@ -204,7 +204,7 @@ describe('POST api/v1/users/:id/articles', function () {
             avatar: 'http://some_url',
         })
 
-        const originalCount = await this.db.Article.count()
+        const originalCount = await this.db.Article.countDocuments()
 
         const data = {
             title: 'some title',
@@ -235,7 +235,7 @@ describe('POST api/v1/users/:id/articles', function () {
             },
         })
 
-        const newCount = await this.db.Article.count()
+        const newCount = await this.db.Article.countDocuments()
         expect(originalCount).to.equals(newCount)
 
     })
@@ -247,7 +247,7 @@ describe('POST api/v1/users/:id/articles', function () {
             avatar: 'http://some_url',
         })
 
-        const originalCount = await this.db.Article.count()
+        const originalCount = await this.db.Article.countDocuments()
 
         const data = {
             title: 'some title',
@@ -282,7 +282,7 @@ describe('POST api/v1/users/:id/articles', function () {
             },
         })
 
-        const newCount = await this.db.Article.count()
+        const newCount = await this.db.Article.countDocuments()
         expect(originalCount).to.equals(newCount)
 
     })
@@ -294,7 +294,7 @@ describe('POST api/v1/users/:id/articles', function () {
             avatar: 'http://some_url',
         })
 
-        const originalCount = await this.db.Article.count()
+        const originalCount = await this.db.Article.countDocuments()
 
         const data = {
             title: 'some title',
@@ -310,7 +310,7 @@ describe('POST api/v1/users/:id/articles', function () {
         .send(data)
         .expect(401)
 
-        const newCount = await this.db.Article.count()
+        const newCount = await this.db.Article.countDocuments()
 
         expect(originalCount).to.equals(newCount)
 

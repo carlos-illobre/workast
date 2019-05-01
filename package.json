@@ -4,15 +4,13 @@
   "description": "Technical Assessment Back End Developer - Workast",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
-    "debug": "node debug server.js",
     "nodemon": "nodemon -e js,json,yml",
-    "test": "eslint --fix . && NODE_ENV=test API_TOKEN=5CD4ED173E1C95FE763B753A297D5 nyc --check-coverage --lines 100 --functions 100 --branches 100 mocha --async-only --bail --exit app/**/*.test.js",
-    "test:debug": "NODE_ENV=test API_TOKEN=5CD4ED173E1C95FE763B753A297D5 mocha debug app/**/*.test.js",
-    "test:nolint": "NODE_ENV=test API_TOKEN=5CD4ED173E1C95FE763B753A297D5 mocha app/**/*.test.js",
+    "test": "eslint --fix . && NODE_ENV=test API_TOKEN=5CD4ED173E1C95FE763B753A297D5 nyc --check-coverage --lines 100 --functions 100 --branches 100 mocha --async-only --bail --exit 'app/**/*.test.js' 'mongodb/**/*.test.js'",
+    "test:debug": "NODE_ENV=test API_TOKEN=5CD4ED173E1C95FE763B753A297D5 mocha debug 'app/**/*.test.js' 'mongodb/**/*.test.js'",
+    "test:nolint": "NODE_ENV=test API_TOKEN=5CD4ED173E1C95FE763B753A297D5 mocha --async-only --bail --exit 'app/**/*.test.js' 'mongodb/**/*.test.js'",
     "dev": "docker-compose run --rm --service-ports api npm run nodemon",
     "dev:build": "docker-compose build && npm run dev",
-    "dev:debug": "docker-compose run --rm --service-ports api npm run debug",
+    "dev:debug": "docker-compose run --rm --service-ports api node debug server.js",
     "dev:shell": "docker-compose run --rm --service-ports api sh",
     "mongo:start": "docker-compose up mongo",
     "mongo:cli": "docker exec -it workast_mongo mongo"
@@ -35,8 +33,7 @@
   "nyc": {
     "include": [
       "app/**/*.js",
-      "database/**/*.js",
-      "models/**/*.js"
+      "mongodb/**/*.js"
     ],
     "reporter": [
       "lcov",
@@ -45,12 +42,12 @@
   },
   "devDependencies": {
     "chai": "^4.1.2",
-    "eslint": "^5.0.0",
+    "eslint": "^5.16.0",
     "eslint-plugin-promise": "^3.8.0",
     "mocha": "^5.2.0",
-    "mockgoose": "^7.3.5",
+    "mockgoose": "^8.0.1",
     "nodemon": "^1.17.5",
-    "nyc": "^12.0.2",
+    "nyc": "^14.1.0",
     "supertest": "^3.1.0"
   },
   "dependencies": {
@@ -62,11 +59,11 @@
     "glob": "^7.1.2",
     "halson": "^3.0.0",
     "joi": "^13.4.0",
-    "lodash": "^4.17.10",
-    "mongoose": "^5.1.6",
+    "lodash": "^4.17.11",
+    "mongoose": "^5.5.5",
     "passport": "^0.4.0",
     "passport-http-bearer": "^1.0.1",
-    "swagger-jsdoc": "^1.9.7",
+    "swagger-jsdoc": "^3.2.9",
     "swagger-ui-express": "^3.0.10",
     "winston": "^3.0.0"
   }

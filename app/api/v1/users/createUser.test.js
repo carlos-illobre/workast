@@ -65,7 +65,7 @@ describe('POST api/v1/users', function () {
 
     it('return 400 if the request has no name', async function() {
 
-        const originalCount = await this.db.User.count()
+        const originalCount = await this.db.User.countDocuments()
 
         const data = {
             avatar: 'http://some_url',
@@ -94,7 +94,7 @@ describe('POST api/v1/users', function () {
             },
         })
 
-        const newCount = await this.db.User.count()
+        const newCount = await this.db.User.countDocuments()
 
         expect(originalCount).to.equals(newCount)
 
@@ -102,7 +102,7 @@ describe('POST api/v1/users', function () {
 
     it('return 400 if the avatar is not a url', async function() {
 
-        const originalCount = await this.db.User.count()
+        const originalCount = await this.db.User.countDocuments()
 
         const data = {
             name: 'some user name',
@@ -132,7 +132,7 @@ describe('POST api/v1/users', function () {
             },
         })
 
-        const newCount = await this.db.User.count()
+        const newCount = await this.db.User.countDocuments()
 
         expect(originalCount).to.equals(newCount)
 
@@ -140,7 +140,7 @@ describe('POST api/v1/users', function () {
 
     it('return 400 if the request has invalid fields', async function() {
 
-        const originalCount = await this.db.User.count()
+        const originalCount = await this.db.User.countDocuments()
 
         const data = {
             name: 'some user name',
@@ -171,14 +171,14 @@ describe('POST api/v1/users', function () {
             },
         })
 
-        const newCount = await this.db.User.count()
+        const newCount = await this.db.User.countDocuments()
 
         expect(originalCount).to.equals(newCount)
     })
 
     it('return 401 if the user was not authenticated', async function() {
 
-        const originalCount = await this.db.User.count()
+        const originalCount = await this.db.User.countDocuments()
 
         const data = {
             name: 'some user name',
@@ -190,7 +190,7 @@ describe('POST api/v1/users', function () {
         .send(data)
         .expect(401, {})
 
-        const newCount = await this.db.User.count()
+        const newCount = await this.db.User.countDocuments()
         
         expect(originalCount).to.equals(newCount)
 

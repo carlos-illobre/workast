@@ -31,7 +31,7 @@ describe('DELETE api/v1/users/:id/articles', function () {
         .set('Authorization', `Bearer ${this.apiToken}`)
         .expect(204, {})
         
-        const exists = await this.db.Article.count({_id: article.id})
+        const exists = await this.db.Article.countDocuments({_id: article.id})
         expect(exists).to.equal(0)
 
     })
@@ -104,7 +104,7 @@ describe('DELETE api/v1/users/:id/articles', function () {
         .delete(`/api/v1/users/${user.id}/articles/${article.id}`)
         .expect(401)
 
-        const exists = await this.db.Article.count({_id: article.id})
+        const exists = await this.db.Article.countDocuments({_id: article.id})
         expect(exists).to.equal(1)
 
     })

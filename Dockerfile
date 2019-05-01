@@ -7,6 +7,6 @@ RUN npm install --only=production
 
 COPY . .
 
-CMD [ "npm", "start" ]
+CMD [ "node", "server.js" ]
 
 EXPOSE 3000

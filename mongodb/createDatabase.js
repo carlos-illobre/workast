@@ -1,5 +1,6 @@
 const glob = require('glob')
 const path = require('path')
+const { chain } = require('lodash')
 
 module.exports = async ({
     logger,
@@ -11,36 +12,27 @@ module.exports = async ({
     mongoose.set('debug', (coll, method, query, doc, options = {}) => {
         logger.info(`${coll},${method},${JSON.stringify(query)},${JSON.stringify(options)}`)
     })
+    
+    const db = chain(glob.sync('./schemas/**/*.js', { cwd: __dirname }))
+    .filter(filename => !filename.endsWith('.test.js'))
+    .map(filename => ({
+        schema: require(filename),
+        name: path.basename(filename).replace(path.extname(filename), ''),
+    }))
+    .filter(({ schema }) => schema instanceof mongoose.Schema)
+    .map(({ name, schema }) => mongoose.model(name, schema))
+    .reduce((db, model) => ({
+        ...db,
+        [model.modelName]: model,
+    }), {})
+    .value()
 
-    mongoose.connect(url)
-
-    const db = glob.sync('./schemas/**/*.js', { cwd: __dirname })
-    .map(filename => {
-        return {
-            schema: require(filename),
-            name: path
-            .basename(filename)
-            .replace(path.extname(filename), ''),
-        }
-    })
-    .map(({name, schema}) => mongoose.model(name, schema))
-    .reduce((db, model) => {
-        return {
-            ...db,
-            [model.modelName]: model,
-        }
-    }, {})
-
-    mongoose
-    .connection
-    .on('error', error => {
-        throw error
-    })
-    .once('open', () => logger.info(`MongoDB connected at ${url}`))
+    mongoose.connection.once('open', () => logger.info(`MongoDB connected at ${url}`))
 
     db.mongoose = mongoose
+    
+    await mongoose.connect(url, {useNewUrlParser: true})
 
     return db
 
 }
-
