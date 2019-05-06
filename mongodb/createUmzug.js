@@ -1,13 +1,13 @@
 const Umzug = require('umzug')
 
-module.exports = ({ connection, logger, db }) => new Umzug({
+module.exports = ({ db, logger }) => new Umzug({
     storage: 'mongodb',
     storageOptions: {
-        connection,
+        connection: db.mongoose.connection,
     },
     logging: logger.info,
     migrations: {
-        params: [{ connection, logger, db }],
+        params: [{ db, logger }],
         path: `${process.cwd()}/mongodb/migrations`,
         traverseDirectories: true,
     },

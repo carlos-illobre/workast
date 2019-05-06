@@ -32,7 +32,7 @@ module.exports = async ({
 
     db.mongoose = await mongoose.connect(url, {useNewUrlParser: true})
 
-    await createUmzug({ db, connection: db.mongoose.connections[0], logger }).up()
+    await createUmzug({ db, logger }).up()
 
     return db
 
