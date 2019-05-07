@@ -1,15 +1,11 @@
 const glob = require('glob')
 const path = require('path')
 const { chain } = require('lodash')
+const mongoose = require('mongoose')
 const createUmzug = require('./createUmzug.js')
 
-module.exports = async ({
-    logger,
-    mongoose = require('mongoose'),
-}) => {
+module.exports = async ({ mongoUri, logger }) => {
 
-    const url = process.env.MONGODB_URL
-    
     mongoose.set('debug', (coll, method, query, doc, options) => {
         logger.info(JSON.stringify({ coll, method, query, options }, null, 2))
     })
@@ -28,9 +24,9 @@ module.exports = async ({
     }), {})
     .value()
 
-    mongoose.connection.once('open', () => logger.info(`MongoDB connected at ${url}`))
+    mongoose.connection.once('open', () => logger.info(`MongoDB connected at ${mongoUri}`))
 
-    db.mongoose = await mongoose.connect(url, {useNewUrlParser: true})
+    db.mongoose = await mongoose.connect(mongoUri, { useNewUrlParser: true })
 
     await createUmzug({ db, logger }).up()
 

@@ -1,13 +1,7 @@
 const request = require('supertest')
 const { expect } = require('chai')
 
-const createTestApp = require(`${process.env.PWD}/test/createTestApp.js`)
-
 describe('DELETE api/v1/users/:id/articles', function () {
-
-    beforeEach(async function() {
-        await createTestApp(this)
-    })
 
     it('return 204 if the article was deeted', async function() {
 

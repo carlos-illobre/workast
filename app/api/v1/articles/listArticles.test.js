@@ -2,13 +2,7 @@ const request = require('supertest')
 const { expect } = require('chai')
 const _ = require('lodash')
 
-const createTestApp = require(`${process.env.PWD}/test/createTestApp.js`)
-
 describe('GET api/v1/articles/', function () {
-
-    beforeEach(async function() {
-        await createTestApp(this)
-    })
 
     it('return 200 if returns all the articles', async function() {
         

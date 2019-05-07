@@ -2,13 +2,7 @@ const request = require('supertest')
 const _ = require('lodash')
 const { expect } = require('chai')
 
-const createTestApp = require(`${process.env.PWD}/test/createTestApp.js`)
-
 describe('PATCH api/v1/users/:userId/articles/:articleId', function () {
-
-    beforeEach(async function() {
-        await createTestApp(this)
-    })
 
     it('return 201 if the article was edited', async function() {
         

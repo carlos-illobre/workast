@@ -5,7 +5,7 @@ const logger = require('./createLogger.js')()
 const createDatabase = require('./mongodb/createDatabase.js')
 const createExpressApp = require('./app/createExpressApp.js')
 
-createDatabase({ logger })
+createDatabase({ logger, mongoUri: process.env.MONGODB_URL })
 .then(database => createExpressApp({
     logger,
     database,

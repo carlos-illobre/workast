@@ -2,13 +2,7 @@ const request = require('supertest')
 const _ = require('lodash')
 const { expect } = require('chai')
 
-const createTestApp = require(`${process.env.PWD}/test/createTestApp.js`)
-
 describe('POST api/v1/users/:id/articles', function () {
-
-    beforeEach(async function() {
-        await createTestApp(this)
-    })
 
     it('return 201 if the article was created by an existent user', async function() {
         
