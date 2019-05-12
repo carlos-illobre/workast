@@ -1,5 +1,5 @@
-const glob = require('glob')
-const path = require('path')
+const { sync } = require('glob')
+const { basename, extname } = require('path')
 const { chain } = require('lodash')
 const mongoose = require('mongoose')
 const ACL = require('acl')
@@ -11,11 +11,10 @@ module.exports = async ({ mongoUri, logger }) => {
     logger.info(JSON.stringify({ coll, method, query, options }, null, 2))
   })
     
-  const db = chain(glob.sync('./schemas/**/*.js', { cwd: __dirname }))
-    .filter(filename => !filename.endsWith('.test.js'))
+  const db = chain(sync('./schemas/**/*.js', { cwd: __dirname, ignore: '**/*.test.js' }))
     .map(filename => ({
       schema: require(filename),
-      name: path.basename(filename).replace(path.extname(filename), ''),
+      name: basename(filename).replace(extname(filename), ''),
     }))
     .filter(({ schema }) => schema instanceof mongoose.Schema)
     .map(({ name, schema }) => mongoose.model(name, schema))

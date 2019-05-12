@@ -5,9 +5,9 @@
   "main": "server.js",
   "scripts": {
     "nodemon": "nodemon -e js,json,yml",
-    "test": "eslint --fix . && NODE_ENV=test API_TOKEN=5CD4ED173E1C95FE763B753A297D5 nyc --check-coverage --lines 100 --functions 100 --branches 100 mocha --async-only --bail --file test/init.js 'app/**/*.test.js' 'mongodb/**/*.test.js'",
-    "test:debug": "NODE_ENV=test API_TOKEN=5CD4ED173E1C95FE763B753A297D5 mocha debug --file test/init.js  'app/**/*.test.js' 'mongodb/**/*.test.js'",
+    "test": "eslint --fix . && nyc npm run test:nolint",
     "test:nolint": "NODE_ENV=test API_TOKEN=5CD4ED173E1C95FE763B753A297D5 mocha --async-only --bail --file test/init.js 'app/**/*.test.js' 'mongodb/**/*.test.js'",
+    "test:debug": "NODE_ENV=test API_TOKEN=5CD4ED173E1C95FE763B753A297D5 mocha debug --file test/init.js  'app/**/*.test.js' 'mongodb/**/*.test.js'",
     "dev": "docker-compose run --rm --service-ports api npm run nodemon",
     "dev:build": "docker-compose build && npm run dev",
     "dev:debug": "docker-compose run --rm --service-ports api node debug server.js",
@@ -33,9 +33,16 @@
   },
   "homepage": "https://github.com/carlos-illobre/workast#readme",
   "nyc": {
+    "check-coverage": true,
+    "lines": 100,
+    "functions": 100,
+    "branches": 100,
     "include": [
       "app/**/*.js",
       "mongodb/**/*.js"
+    ],
+    "exclude": [
+      "**/__snapshots__"
     ],
     "reporter": [
       "lcov",
