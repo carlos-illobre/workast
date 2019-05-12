@@ -4,6 +4,7 @@ const request = require('supertest')
 const createDatabase = require('../mongodb/createDatabase.js')
 const createExpressApp = require('../app/createExpressApp.js')
 const createLogger = require('../createLogger.js')
+const createApolloServer = require('../graphql/createApolloServer.js')
 
 require('events').EventEmitter.defaultMaxListeners = 0
 
@@ -15,7 +16,9 @@ before(async function() {
 beforeEach(async function() {
     const logger = createLogger({ silent: true })
     this.db = await createDatabase({ mongoUri: await this.mongoServer.getConnectionString(), logger })
-    this.request = request(await createExpressApp({ logger, database: this.db }))
+    const app = await createExpressApp({ database: this.db, logger })
+    const apollo = await createApolloServer({ app, logger })
+    this.request = request(app)
 })
 
 after(async function() {

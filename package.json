@@ -4,7 +4,7 @@
   "description": "Technical Assessment Back End Developer - Workast",
   "main": "server.js",
   "scripts": {
-    "nodemon": "nodemon -e js,json,yml",
+    "nodemon": "nodemon --ext js,json,yml,graphql",
     "test": "eslint --fix . && nyc npm run test:nolint",
     "test:nolint": "NODE_ENV=test API_TOKEN=5CD4ED173E1C95FE763B753A297D5 mocha --async-only --bail --file test/init.js 'app/**/*.test.js' 'mongodb/**/*.test.js'",
     "test:debug": "NODE_ENV=test API_TOKEN=5CD4ED173E1C95FE763B753A297D5 mocha debug --file test/init.js  'app/**/*.test.js' 'mongodb/**/*.test.js'",
@@ -24,7 +24,8 @@
     "Express.js",
     "MongoDB",
     "mongoose",
-    "TDD"
+    "TDD",
+    "graphql"
   ],
   "author": "Carlos Illobre",
   "license": "ISC",
@@ -39,7 +40,8 @@
     "branches": 100,
     "include": [
       "app/**/*.js",
-      "mongodb/**/*.js"
+      "mongodb/**/*.js",
+      "graphql/**/*.js"
     ],
     "exclude": [
       "**/__snapshots__"
@@ -62,21 +64,30 @@
   },
   "dependencies": {
     "acl": "^0.4.11",
+    "apollo-opentracing": "^1.2.3",
+    "apollo-server-express": "^2.5.0",
     "body-parser": "^1.18.3",
     "cors": "^2.8.4",
     "express": "^4.16.3",
     "express-validation": "^1.0.2",
     "express-winston": "^2.5.1",
     "glob": "^7.1.2",
+    "graphql": "^14.3.0",
+    "graphql-voyager": "^1.0.0-rc.27",
     "halson": "^3.0.0",
     "joi": "^13.4.0",
     "lodash": "^4.17.11",
+    "merge-graphql-schemas": "^1.5.8",
     "mongoose": "^5.5.5",
+    "opentracing": "^0.14.3",
     "passport": "^0.4.0",
     "passport-http-bearer": "^1.0.1",
     "swagger-jsdoc": "^3.2.9",
     "swagger-ui-express": "^3.0.10",
     "umzug": "^2.2.0",
-    "winston": "^3.0.0"
+    "winston": "^3.0.0",
+    "zipkin": "^0.17.1",
+    "zipkin-javascript-opentracing": "^2.0.0",
+    "zipkin-transport-http": "^0.17.1"
   }
 }

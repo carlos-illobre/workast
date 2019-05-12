@@ -1,21 +1,25 @@
 version: "2"
 services:
+
   api:
     container_name: workast_api
     build: .
     environment:
         # The mongodb host is the database service name
         MONGODB_URL: mongodb://mongo:27017/workast
+        ZIPKIN_ENDPOINT: http://zipkin:9411/api/v1/spans
         NODE_ENV: '${NODE_ENV}'
-        API_TOKEN: '${API_TOKEN}' 
+        API_TOKEN: '${API_TOKEN}'
     ports:
       - "8080:8080"
     expose:
       - 8080
-    links:
+    depends_on:
       - mongo
+      - zipkin
     volumes:
       - .:/app
+
   mongo:
     container_name: workast_mongo
     image: mongo
@@ -25,5 +29,12 @@ services:
       - "27017:27017"
     expose:
       - 27017
+
+  zipkin:
+    container_name: workast_zipkin
+    image: openzipkin/zipkin
+    ports:
+      - 9411:9411 
+
 volumes:
   mongodb:

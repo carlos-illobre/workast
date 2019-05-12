@@ -11,7 +11,10 @@ module.exports = async ({ mongoUri, logger }) => {
     logger.info(JSON.stringify({ coll, method, query, options }, null, 2))
   })
     
-  const db = chain(sync('./schemas/**/*.js', { cwd: __dirname, ignore: '**/*.test.js' }))
+  const db = chain(sync('./schemas/**/*.js', {
+    cwd: __dirname,
+    ignore: ['./schemas/**/*.test.js','./schemas/**/__snapshots__/*'],
+  }))
     .map(filename => ({
       schema: require(filename),
       name: basename(filename).replace(extname(filename), ''),

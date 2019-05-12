@@ -3,4 +3,3 @@ node_modules/
 *.swp
 .nyc_output/
 coverage/
-__snapshots__/
