@@ -22,7 +22,9 @@
   "keywords": [
     "RESTfull",
     "Express.js",
-    "MongoDB"
+    "MongoDB",
+    "mongoose",
+    "TDD"
   ],
   "author": "Carlos Illobre",
   "license": "ISC",
@@ -45,12 +47,14 @@
     "eslint": "^5.16.0",
     "eslint-plugin-promise": "^3.8.0",
     "mocha": "^5.2.0",
+    "mocha-chai-snapshot": "^1.0.0",
     "mongodb-memory-server": "^5.1.0",
     "nodemon": "^1.17.5",
     "nyc": "^14.1.0",
     "supertest": "^3.1.0"
   },
   "dependencies": {
+    "acl": "^0.4.11",
     "body-parser": "^1.18.3",
     "cors": "^2.8.4",
     "express": "^4.16.3",
