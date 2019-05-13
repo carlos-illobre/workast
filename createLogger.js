@@ -1,6 +1,6 @@
 const { createLogger, format, transports } = require('winston')
 
-module.exports = ({ silent } = {}) => createLogger({
+module.exports = () => createLogger({
   level: 'debug',
   format: format.combine(
     format.colorize(),
@@ -8,7 +8,7 @@ module.exports = ({ silent } = {}) => createLogger({
     format.align(),
     format.printf(info => `${info.timestamp} ${info.level}: ${info.message}`)
   ),
-  silent,
+  silent: process.env.NODE_ENV == 'test',
   transports: [
     new transports.Console({
       name: 'error-console',

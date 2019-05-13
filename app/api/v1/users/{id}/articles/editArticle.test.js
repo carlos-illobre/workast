@@ -32,19 +32,6 @@ describe('PATCH api/v1/users/:userId/articles/:articleId', function () {
 
   })
 
-  it('return 500 if internal error', async function() {
-    const user = await this.db.User.create({ name: 'some user name', avatar: 'http://some_url' })
-    delete this.db.Article
-    return this.request.patch(`/api/v1/users/${user.id}/articles/1`)
-      .set('Authorization', `Bearer ${this.apiToken}`)
-      .send({
-        title: 'some title',
-        text: 'some text',
-        tags: ['some tag','other tag'],
-      })
-      .expect(500)
-  })
-
   it('return 404 if the article does not exist', async function() {
     const { body } = await this.request.patch('/api/v1/users/1/articles/xxx')
       .set('Authorization', `Bearer ${this.apiToken}`)

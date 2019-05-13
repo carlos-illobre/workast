@@ -38,19 +38,6 @@ describe('POST api/v1/users/:id/articles', function () {
 
   })
 
-  it('return 500 if internal error', async function() {
-    const user = await this.db.User.create({ name: 'some user name', avatar: 'http://some_url' })
-    delete this.db.Article
-    await this.request.post(`/api/v1/users/${user.id}/articles`)
-      .set('Authorization', `Bearer ${this.apiToken}`)
-      .send({
-        title: 'some title',
-        text: 'some text',
-        tags: ['some tag','other tag'],
-      })
-      .expect(500)
-  })
-
   it('return 404 if the article was created by an unexistent user', async function() {
     const count = await this.db.Article.countDocuments()
     const { body } = await this.request.post('/api/v1/users/unexistentUserId/articles')

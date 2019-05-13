@@ -8,8 +8,8 @@ const createApolloServer = require('./graphql/createApolloServer.js')
 
 module.exports = (async () => {
 
-  const database = await createDatabase({ logger, mongoUri: process.env.MONGODB_URL })
-  const app = await createExpressApp({ logger, database })
+  const db = await createDatabase({ logger })
+  const app = await createExpressApp({ logger, db })
   const apollo = await createApolloServer({ app, logger })
 
   return new Promise((resolve, reject) => {
@@ -30,7 +30,8 @@ module.exports = (async () => {
           process.exit(1)
           break
         default:
-          return reject(error)
+          logger.error(error)
+          break
         }
       })
 
@@ -41,7 +42,7 @@ module.exports = (async () => {
       logger.info(`Graphql server ready at http://localhost:${PORT}${apollo.graphqlPath}`)
       logger.info(`Subscriptions ready at ws://localhost:${PORT}${apollo.subscriptionsPath}`)
       logger.info('Zipkin ready at http://localhost:9411/zipkin/')
-      return resolve(server)
+      return resolve({ server, db })
     })
 
   })

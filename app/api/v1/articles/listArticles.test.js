@@ -161,13 +161,6 @@ describe('GET api/v1/articles/', function () {
 
   })
 
-  it('return 500 if internal error', async function() {
-    delete this.db.Article
-    return this.request.get('/api/v1/articles')
-      .set('Authorization', `Bearer ${this.apiToken}`)
-      .expect(500)
-  })
-
   it('return 401 if the user was not authenticated', async function() {
     return this.request.get('/api/v1/articles').expect(401, {})
   })

@@ -6,7 +6,7 @@ services:
     build: .
     environment:
         # The mongodb host is the database service name
-        MONGODB_URL: mongodb://mongo:27017/workast
+        MONGODB_URI: mongodb://mongo:27017/workast
         ZIPKIN_ENDPOINT: http://zipkin:9411/api/v1/spans
         NODE_ENV: '${NODE_ENV}'
         API_TOKEN: '${API_TOKEN}'

@@ -7,7 +7,7 @@ const swaggerJSDoc = require('swagger-jsdoc')
 const apiRouter = require('./api/createApiRouter.js')()
 const authApiTokenMiddleware = require('./auth/authApiTokenMiddleware.js')
 
-module.exports = async ({ database, logger }) => express()
+module.exports = async ({ db, logger }) => express()
   .use(expressWinston.logger({
     winstonInstance: logger,
     msg: '{{res.statusCode}} {{req.method}} {{req.url}} {{res.responseTime}}ms',
@@ -25,7 +25,7 @@ module.exports = async ({ database, logger }) => express()
   .use((req, res, next) => {
     req.base = `${req.protocol}://${req.get('host')}`
     req.logger = logger
-    req.db = database
+    req.db = db
     return next()
   })
   .use('/api', authApiTokenMiddleware, apiRouter)

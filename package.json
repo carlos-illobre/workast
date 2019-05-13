@@ -6,7 +6,7 @@
   "scripts": {
     "nodemon": "nodemon --ext js,json,yml,graphql",
     "test": "eslint --fix . && nyc npm run test:nolint",
-    "test:nolint": "NODE_ENV=test API_TOKEN=5CD4ED173E1C95FE763B753A297D5 mocha --async-only --bail --file test/init.js 'app/**/*.test.js' 'mongodb/**/*.test.js'",
+    "test:nolint": "NODE_ENV=test API_TOKEN=5CD4ED173E1C95FE763B753A297D5 mocha --async-only --file test/init.js 'app/**/*.test.js' 'mongodb/**/*.test.js'",
     "test:debug": "NODE_ENV=test API_TOKEN=5CD4ED173E1C95FE763B753A297D5 mocha debug --file test/init.js  'app/**/*.test.js' 'mongodb/**/*.test.js'",
     "dev": "docker-compose run --rm --service-ports api npm run nodemon",
     "dev:build": "docker-compose build && npm run dev",
@@ -39,6 +39,9 @@
     "functions": 100,
     "branches": 100,
     "include": [
+      "server.js",
+      "createLogger.js",
+      "test/**/*.js",
       "app/**/*.js",
       "mongodb/**/*.js",
       "graphql/**/*.js"
@@ -60,11 +63,12 @@
     "mongodb-memory-server": "^5.1.0",
     "nodemon": "^1.17.5",
     "nyc": "^14.1.0",
-    "supertest": "^3.1.0"
+    "supertest": "^4.0.2"
   },
   "dependencies": {
     "acl": "^0.4.11",
     "apollo-opentracing": "^1.2.3",
+    "apollo-server": "^2.5.0",
     "apollo-server-express": "^2.5.0",
     "body-parser": "^1.18.3",
     "cors": "^2.8.4",

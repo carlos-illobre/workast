@@ -5,7 +5,7 @@ const mongoose = require('mongoose')
 const ACL = require('acl')
 const createUmzug = require('./createUmzug.js')
 
-module.exports = async ({ mongoUri, logger }) => {
+module.exports = async ({ logger }) => {
 
   mongoose.set('debug', (coll, method, query, doc, options) => {
     logger.info(JSON.stringify({ coll, method, query, options }, null, 2))
@@ -24,9 +24,9 @@ module.exports = async ({ mongoUri, logger }) => {
     .reduce((db, model) => ({ ...db, [model.modelName]: model }), {})
     .value()
 
-  mongoose.connection.once('open', () => logger.info(`MongoDB connected at ${mongoUri}`))
+  mongoose.connection.once('open', () => logger.info(`MongoDB connected at ${process.env.MONGODB_URI}`))
 
-  db.mongoose = await mongoose.connect(mongoUri, { useNewUrlParser: true })
+  db.mongoose = await mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true })
 
   db.acl = new ACL(new ACL.mongodbBackend(db.mongoose.connection.db, '_acl'))
 

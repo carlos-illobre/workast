@@ -41,14 +41,6 @@ describe('POST api/v1/users', function () {
 
   })
 
-  it('return 500 if internal error', async function() {
-    delete this.db.User
-    await this.request.post('/api/v1/users')
-      .set('Authorization', `Bearer ${this.apiToken}`)
-      .send({ name: 'some user name', avatar: 'http://some_url' })
-      .expect(500)
-  })
-
   it('return 400 if the request has no name', async function() {
     const count = await this.db.User.countDocuments()
     const { body } = await this.request.post('/api/v1/users')
