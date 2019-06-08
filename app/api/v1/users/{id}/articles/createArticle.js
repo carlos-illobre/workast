@@ -23,7 +23,7 @@ module.exports = Router({mergeParams: true})
 
       const article = await req.db.Article.create({
         ...req.body,
-        userId: user.id,
+        user,
       })
 
       const location = `${req.base}${req.originalUrl}/${article.id}`

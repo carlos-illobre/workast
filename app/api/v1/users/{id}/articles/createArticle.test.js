@@ -31,10 +31,10 @@ describe('POST api/v1/users/:id/articles', function () {
       },
     })
 
-    const article = await this.db.Article.findById(id)
+    const article = await this.db.Article.findById(id).populate('user')
 
     expect(pick(article, Object.keys(data))).to.deep.equal(data)
-    expect(article.userId.toString()).to.equal(user.id)
+    expect(article.user.id).to.equal(user.id)
 
   })
 
