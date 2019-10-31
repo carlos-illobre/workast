@@ -82,7 +82,7 @@
     "joi": "^13.4.0",
     "lodash": "^4.17.11",
     "merge-graphql-schemas": "^1.5.8",
-    "mongoose": "^5.5.5",
+    "mongoose": "^5.7.5",
     "opentracing": "^0.14.3",
     "passport": "^0.4.0",
     "passport-http-bearer": "^1.0.1",
