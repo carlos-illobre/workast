@@ -80,7 +80,7 @@
     "graphql-voyager": "^1.0.0-rc.27",
     "halson": "^3.0.0",
     "joi": "^13.4.0",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.21",
     "merge-graphql-schemas": "^1.5.8",
     "mongoose": "^5.5.5",
     "opentracing": "^0.14.3",
