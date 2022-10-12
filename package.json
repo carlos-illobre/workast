@@ -68,7 +68,7 @@
   "dependencies": {
     "acl": "^0.4.11",
     "apollo-opentracing": "^1.2.3",
-    "apollo-server": "^2.5.0",
+    "apollo-server": "^2.25.4",
     "apollo-server-express": "^2.5.0",
     "body-parser": "^1.18.3",
     "cors": "^2.8.4",
